@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["walt@wildnotion.com"]
   spec.description   = "This gem provides a simple mechanism for collecting and visualizing event data for your application."
   spec.summary       = "Install this gem, mount the sinatra app on a sub-domain of your app and run the generator to begin collecting stats"
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = "A gem for collecting and plotting rails application usage metrics"
+  spec.summary       = "This gem provides data collection and visualization tools"
   spec.homepage      = ""
   spec.license       = "MIT"
 
