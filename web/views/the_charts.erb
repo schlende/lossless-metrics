@@ -1,0 +1,131 @@
+<html>
+  <head>
+    <title>Lossless Data</title>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="<%= root_path %>Chart.min.js"></script>
+    <script type="text/javascript" src="<%= root_path %>jquery.tokeninput.js"></script>
+    <link rel="stylesheet" type="text/css" href="<%= root_path %>token-input-facebook.css" />
+  </head>
+
+  <style>
+
+    body{
+      margin 0 auto;
+      padding: 0px;
+      margin: 0px;
+      background-color: gold;
+    }
+
+    #filters{
+      padding: 20px;
+      height: 40%;
+    }
+
+    #chart{
+      width: 100%;
+      height: 60%;
+      background-color: white;
+    }
+
+    #container{
+      width: 100%;
+      height: 50%;
+    }
+
+  </style>
+
+  <script>
+
+    $(document).ready(function () {
+      $("#activity_the_type").tokenInput("<%= root_path %>/type_search", {theme: 'facebook',
+        preventDuplicates: true,
+        <% if @current_selection.present? %>
+          prePopulate: [
+            <% @current_selection.each do |selection| %>
+              {id: "<%= selection %>", name: "<%= selection %>"},
+            <% end %>
+          ]
+        <% end %>
+      });
+    });
+
+  </script>
+
+  <body>
+
+    <div id="continer">
+      <canvas id="chart"></canvas>
+    </div>
+
+    <div id="filters">
+      <form action="<%= root_path %>" >
+        <input id="activity_the_type" name="activity[the_type]" type="text">
+        <br/>
+        <input id="activity_distinct_distinct" name="activity[distinct]" type="checkbox" <%= @distinct ? 'checked' : '' %> value="Distinct">
+        Distinct
+        <br/><br/>
+        <input type="submit" value="Filter" >
+      </form>
+
+      <!--
+      <form>
+        <select>
+            <option value="breaks_hours">Hours</option>
+            <option selected="selected" value="breaks_days">Days</option>
+            <option value="breaks_weeks">Weeks</option>
+        </select>
+
+        <select>
+            <option selected="selected" value="duration_10">Past 10 Days</option>
+            <option value="duration_30">Past 30 Days</option>
+        </select>
+
+        <select>
+            <option selected="selected" value="viewed_poems_list">ViewedPoemsList</option>
+            <option value="viewed_poems_list">ViewedBulkExport</option>
+        </select>
+
+        <button>Filter</button>
+      </form>
+      -->
+    </div>
+
+    <script>
+      var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+      var lineChartData = {
+
+          <% if @counts.first %>
+            labels : <%= @counts.first[1].map{ |c| c["date"] } %>,
+            datasets : [
+              <% @counts.each do |name, count| %>
+                <% red = rand(255) %>
+                <% green = rand(255) %>
+                <% blue = rand(255) %>
+                {
+                  label: "<%= name %>",
+                  fillColor : "rgba(<%= red %>,<%= green %>,<%= blue %>,0)",
+                  strokeColor : "rgba(<%= red %>,<%= green %>,<%= blue %>,1)",
+                  pointColor : "rgba(<%= red %>,<%= green %>,<%= blue %>,1)",
+                  pointStrokeColor : "#fff",
+                  pointHighlightFill : "#fff",
+                  pointHighlightStroke : "rgba(151,187,205,1)",
+                  data : <%= count.map{ |c| c["count"] } %>
+                },
+              <% end %>
+            ]
+          <% end %>
+      }
+      window.onload = function(){
+        var ctx = document.getElementById("chart").getContext("2d");
+        window.myLine = new Chart(ctx).Line(lineChartData, {
+            responsive: true,
+            bezierCurve : false,
+            multiTooltipTemplate: "<%%= datasetLabel %> - <%%= value %>",
+            responsive: true,
+            maintainAspectRatio: false
+        });
+      }
+    </script>
+  </body>
+</html>
